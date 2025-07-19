@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  reconciliation-trainer:
+    build: .
+    container_name: reconciliation-slm-trainer
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./logs:/app/logs
+      - ./results:/app/results
+      - .:/app/src
+    environment:
+      - PYTHONPATH=/app
+      - TORCH_HOME=/app/torch_cache
+      - HF_HOME=/app/huggingface_cache
+      - WANDB_MODE=offline
+    stdin_open: true
+    tty: true
+    
+  jupyter:
+    build: .
+    container_name: reconciliation-jupyter
+    command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./notebooks:/app/notebooks
+      - .:/app/src
+    environment:
+      - PYTHONPATH=/app
+      - TORCH_HOME=/app/torch_cache
+      - HF_HOME=/app/huggingface_cache
